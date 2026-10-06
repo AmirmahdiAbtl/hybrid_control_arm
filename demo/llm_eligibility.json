@@ -1,0 +1,64 @@
+{
+  "criteria": [
+    {
+      "id": "I1",
+      "section": "inclusion",
+      "text": "Primary operable breast cancer (T1-3, no distant metastases)",
+      "kind": "not_checkable",
+      "rule": null,
+      "column": null,
+      "question": null,
+      "note": "Operability is not recorded in the historical data."
+    },
+    {
+      "id": "I2",
+      "section": "inclusion",
+      "text": "Histologically proven positive axillary lymph nodes (at least one positive node)",
+      "kind": "rule",
+      "rule": "nodes >= 1",
+      "column": "nodes",
+      "question": null,
+      "note": ""
+    },
+    {
+      "id": "I3",
+      "section": "inclusion",
+      "text": "Adjuvant chemotherapy with cyclophosphamide, methotrexate and fluorouracil (CMF)",
+      "kind": "rule",
+      "rule": "chemo == 1",
+      "column": "chemo",
+      "question": null,
+      "note": "Approximation: only chemotherapy yes/no is recorded, not the CMF regimen."
+    },
+    {
+      "id": "I4",
+      "section": "inclusion",
+      "text": "Written informed consent",
+      "kind": "not_checkable",
+      "rule": null,
+      "column": null,
+      "question": null,
+      "note": "Consent is not recorded."
+    },
+    {
+      "id": "E1",
+      "section": "exclusion",
+      "text": "Distant metastases at diagnosis",
+      "kind": "not_checkable",
+      "rule": null,
+      "column": null,
+      "question": null,
+      "note": "Metastasis status is not recorded."
+    },
+    {
+      "id": "C1",
+      "section": "control_arm",
+      "text": "No adjuvant hormonal therapy (chemotherapy alone)",
+      "kind": "rule",
+      "rule": "hormon == 0",
+      "column": "hormon",
+      "question": null,
+      "note": ""
+    }
+  ]
+}

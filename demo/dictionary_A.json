@@ -1,0 +1,12 @@
+{
+  "age": "Patient age (years)",
+  "menostat": "Menopausal status (Pre/Post)",
+  "tsize": "Tumour size (mm)",
+  "tgrade": "Tumour grade (I/II/III)",
+  "pnodes": "Number of positive lymph nodes",
+  "progrec": "Progesterone receptor (fmol/l)",
+  "estrec": "Estrogen receptor (fmol/l)",
+  "horTh": "Hormonal therapy (no/yes)",
+  "time": "Recurrence-free survival time (days)",
+  "cens": "Event: recurrence or death (1) / censored (0)"
+}

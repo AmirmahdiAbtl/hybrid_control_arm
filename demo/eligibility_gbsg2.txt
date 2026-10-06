@@ -1,0 +1,11 @@
+Inclusion Criteria:
+- Primary operable breast cancer (T1-3, no distant metastases)
+- Histologically proven positive axillary lymph nodes (at least one positive node)
+- Adjuvant chemotherapy with cyclophosphamide, methotrexate and fluorouracil (CMF)
+- Written informed consent
+
+Exclusion Criteria:
+- Distant metastases at diagnosis
+
+Control arm:
+- No adjuvant hormonal therapy (chemotherapy alone)

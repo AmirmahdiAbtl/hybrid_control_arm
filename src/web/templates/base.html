@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Hybrid Control Arm{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/mark-dark.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+</head>
+<body {% block body_attrs %}{% endblock %}>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="{{ url_for('pages.landing') }}"><img class="logo-img" src="{{ url_for('static', filename='img/logo-dark.png') }}" alt="InSilicoTrials"><span class="logo-sub">Hybrid Control Arm</span></a>
+    <ul>
+      <li><a href="{{ url_for('pages.landing') }}#how">How it works</a></li>
+      <li><a href="{{ url_for('pages.landing') }}#trust">Why trust it</a></li>
+      <li><a href="{{ url_for('pages.landing') }}#results">Results</a></li>
+      <li><a href="{{ url_for('pages.landing') }}#modes">Two ways to run</a></li>
+      <li><a href="{{ url_for('pages.docs_index') }}" {% if request.endpoint == 'pages.docs' %}class="on"{% endif %}>Docs</a></li>
+    </ul>
+    <a class="btn btn-black" href="{{ url_for('pages.run') }}">Run analysis</a>
+  </div>
+</header>
+{% block content %}{% endblock %}
+<footer class="footer">
+  <div class="wrap">
+    <a class="logo" href="{{ url_for('pages.landing') }}"><img class="logo-img" src="{{ url_for('static', filename='img/logo-white.png') }}" alt="InSilicoTrials"><span class="logo-sub">Hybrid Control Arm</span></a>
+    <nav>
+      <a href="{{ url_for('pages.landing') }}#how">How it works</a>
+      <a href="{{ url_for('pages.landing') }}#trust">Why trust it</a>
+      <a href="{{ url_for('pages.landing') }}#results">Results</a>
+      <a href="{{ url_for('pages.docs_index') }}">Docs</a>
+      <a href="{{ url_for('pages.run') }}">Run</a>
+    </nav>
+    <small>Research prototype for the Prior Labs hackathon. TabPFN, Jev and an LLM. Not a medical device and not a substitute for randomized evidence.</small>
+  </div>
+</footer>
+<script>
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

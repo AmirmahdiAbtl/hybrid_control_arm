@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Run an analysis · Hybrid Control Arm{% endblock %}
+{% block body_attrs %}data-data="{{ form.data }}"{% endblock %}
+{% block content %}
+<main class="page"><div class="wrap">
+  <h1>Run an analysis</h1>
+  <p class="sub">Pick how to run, pick the data, and start. Nothing is sent anywhere until you press the button.</p>
+  {% if not llm_ready %}<div class="notice warn">The LLM is not configured, so a run cannot start. Set <code>ANTHROPIC_FOUNDRY_API_KEY</code>, <code>ANTHROPIC_FOUNDRY_RESOURCE</code> and <code>ANTHROPIC_MODEL</code> in <code>.env</code> and restart the app.</div>{% endif %}
+  {% if error %}<div class="notice error">{{ error }}</div>{% endif %}
+  <form method="post" action="{{ url_for('pages.run') }}" enctype="multipart/form-data" id="run-form">
+    <div class="form-grid">
+      <div>
+        <div class="panel">
+          <h2>1. How to run</h2>
+          <p class="hint">You can change your mind: both use the same agent and the same gates.</p>
+          <div class="choice">
+            <label><input type="radio" name="mode" value="single" {{ 'checked' if form.mode == 'single' }}><b>Single loop</b><span>Start, wait, read the report. Every question is answered yes automatically, and the report says so.</span></label>
+            <label><input type="radio" name="mode" value="step" {{ 'checked' if form.mode == 'step' }}><b>Step by step</b><span>The agent pauses at the column mapping, the eligibility rules, the plan and each repair, and waits for you.</span></label>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>2. Data</h2>
+          <p class="hint">The agent needs the new trial and a historical study. They may use different column names and codings.</p>
+          <div class="choice three">
+            {% for key, e in examples.items() %}
+            <label><input type="radio" name="data" value="{{ key }}" data-nct="{{ e.nct }}" {{ 'checked' if form.data == key }}><b>{{ e.title }}</b><span>{{ e.text }}</span><span class="reg">{{ e.registry }}</span></label>
+            {% endfor %}
+            <label><input type="radio" name="data" value="upload" data-nct="" {{ 'checked' if form.data == 'upload' }}><b>Upload your own</b><span>Two CSV files, and optionally a dictionary of column descriptions for each.</span></label>
+          </div>
+          <div class="upload-only" style="margin-top:20px">
+            <div class="row2">
+              <div class="field"><label for="trial">New trial (CSV)</label><input id="trial" type="file" name="trial" accept=".csv"><small>Needs a treatment column, a time and an event column.</small></div>
+              <div class="field"><label for="hist">Historical study (CSV)</label><input id="hist" type="file" name="hist" accept=".csv"><small>No treatment column needed.</small></div>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="trial_dict">Trial dictionary (optional JSON)</label><input id="trial_dict" type="file" name="trial_dict" accept=".json"><small>{"column": "description"}. Helps the matching a lot.</small></div>
+              <div class="field"><label for="hist_dict">Historical dictionary (optional JSON)</label><input id="hist_dict" type="file" name="hist_dict" accept=".json"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>3. Trial record and settings</h2>
+          <p class="hint">All optional. The registry record and the eligibility text decide which historical patients are used.</p>
+          <div class="row2">
+            <div class="field"><label for="nct">ClinicalTrials.gov id</label><input id="nct" type="text" name="nct" value="{{ form.nct }}" placeholder="NCT00000000"><small>Fetches the title, arms, primary outcome and eligibility.</small></div>
+            <div class="field"><label for="backend">Prediction model</label>
+              <select id="backend" name="backend">{% for k, label in backends.items() %}<option value="{{ k }}" {{ 'selected' if form.backend == k }}>{{ label }}</option>{% endfor %}</select>
+              <small>Only the logistic baseline is quick; it is not TabPFN.</small></div>
+          </div>
+          <div class="field"><label for="eligibility">Eligibility criteria text</label><textarea id="eligibility" name="eligibility" placeholder="Paste the inclusion and exclusion criteria. For the GBSG-2 example this is filled in for you.">{{ form.eligibility }}</textarea></div>
+          <div class="row2">
+            <div class="field"><label for="n_real">Keep only this many trial controls</label><input id="n_real" type="number" name="n_real" min="0" max="2000" value="{{ form.n_real }}"><small>0 = all. A small number simulates a small control arm.</small></div>
+            <div class="field"><label for="max_repairs">Most repairs allowed</label><input id="max_repairs" type="number" name="max_repairs" min="0" max="8" value="{{ form.max_repairs }}"><small>Each repair changes one thing and reruns the gates.</small></div>
+          </div>
+        </div>
+        <p style="margin-top:22px"><button class="btn btn-green" type="submit" {{ 'disabled' if not llm_ready }}>Start the analysis</button></p>
+      </div>
+      <aside class="side">
+        <div class="panel">
+          <h2>What happens</h2>
+          <p class="hint">The steps you will see on the next page.</p>
+          <ol class="step-list">
+            <li><span class="n">1</span><span>Read the data and the trial record</span></li>
+            <li><span class="n">2</span><span>Match the columns <em>(you confirm in step by step)</em></span></li>
+            <li><span class="n">3</span><span>Filter the historical patients <em>(you confirm)</em></span></li>
+            <li><span class="n">4</span><span>The LLM drafts the plan, code checks it</span></li>
+            <li><span class="n">5</span><span>A second LLM call reviews it <em>(you confirm)</em></span></li>
+            <li><span class="n">6</span><span>The plan is frozen</span></li>
+            <li><span class="n">7</span><span>Gates run in order</span></li>
+            <li><span class="n">8</span><span>A failed gate gets one fix <em>(you confirm)</em></span></li>
+            <li><span class="n">9</span><span>Report</span></li>
+          </ol>
+        </div>
+        {% if recent %}
+        <div class="recent"><b>Recent runs</b>
+          {% for r in recent %}<a href="{{ url_for('jobs.job_page', job_id=r.id) }}">{{ r.label }} · {{ r.status }}</a>{% endfor %}
+        </div>
+        {% endif %}
+      </aside>
+    </div>
+  </form>
+</div></main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/run.js') }}"></script>{% endblock %}

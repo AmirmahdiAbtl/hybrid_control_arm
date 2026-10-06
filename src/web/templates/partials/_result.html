@@ -1,0 +1,52 @@
+{% set r = result %}
+<div class="verdict {{ 'ok' if r.verdict == 'ACCEPTED' else 'no' }}">
+  <div class="k">{{ r.verdict }} · tier {{ r.tier }}</div>
+  <h2>{{ r.claim }}</h2>
+  {% if r.reason %}<p>{{ r.reason }}</p>{% endif %}
+  <p style="opacity:.8;font-size:12.5px;margin-top:10px">Plan: {{ r.plan_by }} · {{ r.mode }}{% if r.prognostic_label %} · prognostic score: {{ r.prognostic_label }}{% endif %}</p>
+</div>
+
+{% if r.borrowing_note %}<div class="notice warn"><b>Warning.</b> {{ r.borrowing_note }}</div>{% endif %}
+
+{% if r.primary %}
+<div class="metrics">
+  <div class="metric"><small>Difference at {{ '%g' % r.primary.horizon_years }} years (points)</small><b>{{ '%+.1f' % (100 * r.primary.est) }}</b></div>
+  <div class="metric"><small>95% interval</small><b>{{ '%+.1f' % (100 * r.primary.lo) }} to {{ '%+.1f' % (100 * r.primary.hi) }}</b></div>
+  <div class="metric"><small>Event-free: treated / estimated control</small><b>{{ '%.1f' % (100 * r.primary.s1) }}% / {{ '%.1f' % (100 * r.primary.s0) }}%</b></div>
+  <div class="metric"><small>E-value (interval limit)</small><b>{{ '%.2f' % r.sensitivity.evalue }} ({{ '%.2f' % r.sensitivity.evalue_ci }})</b></div>
+</div>
+{% endif %}
+
+{% if r.narrative %}<div class="card"><h3>In plain words</h3><div class="prose-plain">{{ r.narrative }}</div></div>{% endif %}
+
+<div class="result-grid" style="margin-top:22px">
+  <div>
+    <div class="card"><h3>Gates (final design)</h3>
+      <table class="t"><tr><th>Gate</th><th>Status</th><th>Checks</th></tr>
+      {% for g in r.gates %}<tr><td><b>{{ g.id }}</b> {{ gate_names[g.id] }}</td><td><span class="chip {{ g.status }}">{{ g.status.replace('_', ' ') }}</span></td>
+        <td style="color:var(--muted)">{% for c in g.checks %}{{ c.name }} {{ '%.3g' % c.value }}{% if c.op != 'report' %} {{ c.op }} {{ '%.3g' % c.limit }}{% endif %}{{ '; ' if not loop.last }}{% endfor %} {{ g.note }}</td></tr>{% endfor %}
+      </table>
+    </div>
+    <div class="card"><h3>Repairs ({{ r.repairs | length }})</h3>
+      {% if not r.repairs %}<p style="margin:0;font-size:13px">None: the first design passed every gate.</p>{% else %}
+      <p style="font-size:12.5px;color:var(--muted);margin-top:0">A repair is chosen from the failing gate's numbers only, never from the estimate. Every design version that reached the outcomes is listed.</p>
+      <ol style="padding-left:18px;font-size:13px">{% for t in r.repairs %}<li>After <b>{{ t.gate }}</b> failed, the agent {{ t.plain }}.<br><span style="color:var(--muted);font-size:12px">Reason given: {{ t.reason }}</span></li>{% endfor %}</ol>
+      <table class="t"><tr><th>Version</th><th>Failed gate</th><th>Reached outcomes</th><th>Difference (points)</th></tr>
+      {% for a in r.attempts %}<tr><td>{{ a.version }}</td><td>{{ a.failed or '-' }}</td><td>{{ 'yes' if a.estimate else 'no' }}</td><td>{{ '%+.1f' % (100 * a.estimate.est) if a.estimate else '' }}</td></tr>{% endfor %}</table>
+      {% endif %}
+    </div>
+  </div>
+  <div>
+    {% if r.critic %}<div class="card"><h3>Independent review of the plan</h3><p style="margin-top:0;font-size:13px">Verdict: <b>{{ r.critic.verdict }}</b></p>
+      <ul style="padding-left:18px;font-size:13px">{% for x in r.critic.concerns %}<li><b>{{ x.severity }}</b>: {{ x.issue }} <span style="color:var(--muted)">(fix: {{ x.fix }} {{ x.column }})</span></li>{% endfor %}</ul></div>{% endif %}
+    <details class="card"><summary>The plan the LLM wrote (frozen before the gates)</summary><pre class="json">{{ r.spec | tojson(indent=2) }}</pre><p style="font-size:12px;color:var(--muted);margin-bottom:0">Digest {{ r.plan_digest }}</p></details>
+    <details class="card"><summary>Confirmations ({{ r.confirmations | length }})</summary>
+      <table class="t"><tr><th>Step</th><th>Answer</th><th>Automatic</th></tr>{% for c in r.confirmations %}<tr><td>{{ c.kind }}</td><td>{{ c.answer }}</td><td>{{ 'yes' if c.automatic else 'no' }}</td></tr>{% endfor %}</table></details>
+  </div>
+</div>
+
+<div class="downloads">
+  {% for name in ('report.md', 'result.json', 'audit.jsonl') %}<a class="btn btn-ghost" href="{{ url_for('jobs.download', job_id=record.id, name=name) }}">Download {{ name }}</a>{% endfor %}
+  <a class="btn btn-green" href="{{ url_for('pages.run') }}">Run another analysis</a>
+</div>
+<p class="fineprint">{{ r.footer }}</p>

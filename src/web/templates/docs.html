@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} · Hybrid Control Arm{% endblock %}
+{% block content %}
+<main class="page"><div class="wrap docs">
+  <aside>
+    <div class="doc-switch"><h4>Documents</h4>
+      {% for key, (label, _) in docs.items() %}<a href="{{ url_for('pages.docs', name=key) }}" class="{{ 'on' if key == name }}">{{ label }}</a>{% endfor %}
+    </div>
+    <h4>On this page</h4>
+    {% for level, ident, text in toc %}<a class="l{{ level }}" href="#{{ ident }}">{{ text }}</a>{% endfor %}
+  </aside>
+  <article class="prose">{{ body | safe }}</article>
+</div></main>
+{% endblock %}

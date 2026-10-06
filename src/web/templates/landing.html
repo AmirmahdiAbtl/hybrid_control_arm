@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Hybrid control arm</div>
+      <h1>A Control Arm You Can <em>Trust</em></h1>
+      <p class="lead">Give it your trial and an older study. An AI agent matches the data, drafts the plan, runs the checks and repairs what fails, and every step is written to an audit log.</p>
+      <div class="cta">
+        <a class="btn btn-green" href="{{ url_for('pages.run') }}">Start analysis</a>
+        <a class="link-arrow" href="{{ url_for('pages.docs_index') }}">Read the docs</a>
+      </div>
+      <div class="pills">
+        <span class="pill">Column matching</span><span class="pill">Eligibility rules</span><span class="pill">Gated checks</span>
+        <span class="pill">TabPFN</span><span class="pill">Self-repair</span><span class="pill">Audit log</span>
+      </div>
+    </div>
+    <div class="hero-art">{% include 'partials/_hero_art.html' %}</div>
+  </div>
+</section>
+
+<section class="quote"><div class="wrap"><div class="band">
+  <blockquote>“Old patient records are a puzzle. With the right checks, they can show a clear answer, and with the wrong ones, a confident mistake.”</blockquote>
+</div></div></section>
+
+<section class="section" id="how"><div class="wrap">
+  <h2>See how a run works</h2>
+  <div class="explorer" id="explorer">
+    <div class="explorer-list" role="tablist">
+      {% for n, name, text, ask, llm, code, example in steps %}
+      <button role="tab" data-i="{{ loop.index0 }}" class="{{ 'on' if loop.first }}"><span class="n">{{ n }}</span>{{ name }}{% if ask %}<span class="ask">you confirm</span>{% endif %}</button>
+      {% endfor %}
+    </div>
+    <div class="explorer-detail">
+      <h3 id="ex-title"></h3>
+      <p id="ex-text"></p>
+      <div class="who">
+        <div><b>The LLM</b><span id="ex-llm"></span></div>
+        <div><b>The code</b><span id="ex-code"></span></div>
+      </div>
+      <pre class="example" id="ex-example"></pre>
+      <div class="explorer-bar">
+        <button class="round" id="ex-play" aria-label="Pause">❚❚</button>
+        <div class="progress"><i id="ex-bar"></i></div>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="ex-data">{{ steps | tojson }}</script>
+</div></section>
+
+<section class="section" id="trust"><div class="wrap about">
+  <div>
+    <h2>Built so you can <em>check</em> it</h2>
+    <p>An LLM is good at reading messy tables and trial text. It is not allowed to decide whether the analysis is sound. Code does that, with thresholds fixed before the data is looked at.</p>
+    <ul class="points">
+      <li>The LLM drafts. Code validates every column, code, horizon and covariate, and computes every gate and the verdict.</li>
+      <li>When a gate fails, the agent picks a fix from the failing numbers. It never sees the estimate, so it cannot chase a nicer result.</li>
+      <li>Every design version that reached the outcomes is listed in the report. Nothing is hidden, and the plan is hashed before any outcome is read.</li>
+    </ul>
+    <a class="link-arrow" href="{{ url_for('pages.docs', name='agent') }}#the-gates">How the gates work</a>
+  </div>
+  <div class="audit-card" aria-label="An excerpt of an audit log">
+    <div class="dots"><i></i><i></i><i></i></div>
+<span class="dim">== 6. Plan frozen (e1e000a53c1f); borrowing on ==</span><br>
+<span class="dim">== 7. Gates, design version 1 ==</span><br>
+G1 data fitness <span class="ok">PASS</span><br>
+G2 positivity <span class="ok">PASS</span><br>
+G3 balance <span class="ok">PASS</span><br>
+G4 external support <span class="bad">FAIL</span><br>
+<span class="act">→ stop comparing 'age' between trial and historical</span><br>
+<span class="dim">== 7. Gates, design version 2 ==</span><br>
+G4 external support <span class="ok">PASS</span><br>
+G5 follow-up and horizon <span class="ok">PASS</span><br>
+G6 prognostic model (TabPFN) <span class="ok">PASS</span><br>
+<span class="dim">reading the trial outcomes once</span><br>
+G7 estimation integrity <span class="ok">PASS</span>
+  </div>
+</div></section>
+
+<section class="section" id="results"><div class="wrap">
+  <div class="carousel-head">
+    <h2>Run on real data</h2>
+    <div class="arrows"><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button></div>
+  </div>
+  <div class="track" id="track">
+    {% for r in results %}
+    <article class="result-card">
+      <span class="tag">{{ r.tag }}</span>
+      <h3>{{ r.title }}</h3>
+      <div class="big">{{ r.headline }}</div>
+      <div class="iv">{{ r.interval }}</div>
+      <span class="badge">{{ r.verdict }}</span>
+      <p>{{ r.text }}</p>
+    </article>
+    {% endfor %}
+    <article class="result-card cta">
+      <h3>Your data next</h3>
+      <p>Two CSV files and, if it has one, a ClinicalTrials.gov id. That is all the agent needs.</p>
+      <a class="btn btn-green" style="align-self:flex-start;margin-top:10px" href="{{ url_for('pages.run') }}">Start analysis</a>
+    </article>
+  </div>
+  <p class="fineprint">Both runs used the TabPFN API, the real LLM and Jev, with every step confirmed automatically. The plans were drafted by an LLM and checked by code, not by a clinician. Results are risk differences in event-free probability; “effect not demonstrated” means the interval includes zero.</p>
+</div></section>
+
+<section class="section" id="modes"><div class="wrap">
+  <h2>Two ways to run it</h2>
+  <div class="start">
+    <div class="info-card">
+      <h3>What you need</h3>
+      <dl>
+        <div><dt>Inputs</dt><dd>The new trial as a CSV (treatment, time, event) and the historical study as a CSV. Column dictionaries are optional.</dd></div>
+        <div><dt>Optional</dt><dd>A ClinicalTrials.gov id or the eligibility text, so the historical patients can be filtered.</dd></div>
+        <div><dt>Time</dt><dd>One to five minutes, depending on the model backend.</dd></div>
+        <div><dt>Output</dt><dd>A report, a result file and a full audit log.</dd></div>
+      </dl>
+    </div>
+    <div class="mode-cards">
+      <div class="mode">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div>
+        <h3>Single loop</h3>
+        <p>Press start and get a report. The agent runs from the data to the verdict and repairs failed gates by itself.</p>
+        <ul><li>Every question is answered “yes” automatically</li><li>The report says no human confirmed the steps</li></ul>
+        <a class="btn btn-green" href="{{ url_for('pages.run', mode='single') }}">Run in one loop</a>
+      </div>
+      <div class="mode">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></div>
+        <h3>Step by step</h3>
+        <p>The agent stops at the points that need judgement and waits for you to continue, stop or change something.</p>
+        <ul><li>Column mapping, eligibility rules, the plan, each repair</li><li>Watch the steps and gates fill in live</li></ul>
+        <a class="btn btn-green" href="{{ url_for('pages.run', mode='step') }}">Run step by step</a>
+      </div>
+    </div>
+  </div>
+</div></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/landing.js') }}"></script>{% endblock %}

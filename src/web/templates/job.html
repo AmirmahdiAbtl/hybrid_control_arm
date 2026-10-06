@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ record.label }} · Hybrid Control Arm{% endblock %}
+{% block content %}
+<main class="page"><div class="wrap" id="job" data-api="{{ url_for('jobs.api_job', job_id=record.id) }}" data-answer="{{ url_for('jobs.api_answer', job_id=record.id) }}" data-cancel="{{ url_for('jobs.api_cancel', job_id=record.id) }}" data-status="{{ snap.status }}">
+  <div class="job-head">
+    <div>
+      <h1>{{ record.label }}</h1>
+      <div class="meta">{{ 'Single loop' if record.mode == 'single' else 'Step by step' }} · {{ record.options.backend }}{% if record.options.n_real %} · {{ record.options.n_real }} controls kept{% endif %}{% if snap.status in ('running', 'waiting') %} · <span id="elapsed"></span>{% endif %}</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span class="status {{ snap.status }}" id="status"><i></i><span id="status-text">{{ {'running': 'Running', 'waiting': 'Waiting for you', 'done': 'Finished', 'failed': 'Failed'}[snap.status] }}</span></span>
+      {% if snap.status in ('running', 'waiting') %}<button class="btn btn-ghost" id="cancel" style="padding:11px 18px;font-size:12px">Stop at the next question</button>{% endif %}
+    </div>
+  </div>
+
+  <div class="stepper" id="stepper">
+    {% for n, name, text, ask in steps %}
+    {% set cls = 'done' if (snap.status in ('done',) or n < snap.step) else ('active' if n == snap.step else '') %}
+    <div class="stp {{ cls }}{{ ' waiting' if cls == 'active' and snap.status == 'waiting' }}" data-n="{{ n }}" title="{{ text }}"><span class="n">STEP {{ n }}</span>{{ name }}{% if ask %}<i class="ask" title="You confirm here in step by step mode"></i>{% endif %}</div>
+    {% endfor %}
+  </div>
+
+  {% if snap.status in ('running', 'waiting') %}
+  <div id="question-slot"></div>
+  <div class="job-grid">
+    <div class="log" id="log" aria-live="polite"></div>
+    <div>
+      <div class="card"><h3>Gates</h3><div id="versions"><span class="hint" style="font-size:12.5px;color:var(--muted)">The gates appear here once the plan is frozen.</span></div></div>
+      <div class="card" id="repairs-card" hidden><h3>Repairs applied</h3><ol id="repairs" style="margin:0;padding-left:18px;font-size:13px"></ol></div>
+    </div>
+  </div>
+  {% elif snap.status == 'failed' %}
+  <div class="notice error"><b>The run failed.</b></div>
+  <pre class="json">{{ snap.error }}</pre>
+  {% else %}
+  {% include 'partials/_result.html' %}
+  {% endif %}
+</div></main>
+{% endblock %}
+{% block scripts %}{% if snap.status in ('running', 'waiting') %}<script src="{{ url_for('static', filename='js/job.js') }}"></script>{% endif %}{% endblock %}

@@ -1,0 +1,17 @@
+{
+  "pid": "Patient identifier",
+  "year": "Year of surgery",
+  "age": "Age at surgery (years)",
+  "meno": "Menopausal status (0 = pre, 1 = post)",
+  "size": "Tumour size group (<=20, 20-50, >50 mm)",
+  "grade": "Differentiation grade (2 or 3)",
+  "nodes": "Number of positive lymph nodes",
+  "pgr": "Progesterone receptors (fmol/l)",
+  "er": "Estrogen receptors (fmol/l)",
+  "hormon": "Hormonal treatment (0/1)",
+  "chemo": "Chemotherapy (0/1)",
+  "rtime": "Days to recurrence or last follow-up",
+  "recur": "Recurrence (0/1)",
+  "dtime": "Days to death or last follow-up",
+  "death": "Death (0/1)"
+}

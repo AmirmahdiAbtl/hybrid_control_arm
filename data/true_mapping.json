@@ -1,0 +1,47 @@
+{
+  "age": {
+    "match": "age",
+    "transform": "none"
+  },
+  "menostat": {
+    "match": "meno",
+    "transform": "Pre -> 0, Post -> 1"
+  },
+  "tsize": {
+    "match": "size",
+    "transform": "mm -> category: <=20, 20-50, >50 (detail lost)"
+  },
+  "tgrade": {
+    "match": "grade",
+    "transform": "I -> 1, II -> 2, III -> 3; Data B has only 2 and 3 (definition may differ)"
+  },
+  "pnodes": {
+    "match": "nodes",
+    "transform": "none"
+  },
+  "progrec": {
+    "match": "pgr",
+    "transform": "none (fmol/l in both)"
+  },
+  "estrec": {
+    "match": "er",
+    "transform": "none (fmol/l in both)"
+  },
+  "horTh": {
+    "match": "hormon",
+    "transform": "no -> 0, yes -> 1"
+  },
+  "time": {
+    "match": "rtime + dtime (derived)",
+    "transform": "recurrence-free time = rtime if recur==1 else dtime"
+  },
+  "cens": {
+    "match": "recur + death (derived)",
+    "transform": "event = recur, or death without recurrence"
+  },
+  "_only_in_B": [
+    "pid",
+    "year",
+    "chemo"
+  ]
+}

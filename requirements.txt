@@ -1,0 +1,14 @@
+numpy
+pandas
+scipy
+scikit-learn<=1.9.0
+tabpfn==9.0.0
+tabpfn-client==0.6.1
+typesafe-sdk==0.7.2
+pydantic>=2
+anthropic
+python-dotenv
+pytest
+langgraph>=1.0
+flask>=3
+markdown-it-py>=3

@@ -1,0 +1,336 @@
+{
+  "age": {
+    "a_col": "age",
+    "b_cols": [
+      "age"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "identity",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "numeric, ranges plausible"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Both are age in years at diagnosis/surgery.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "menostat": {
+    "a_col": "menostat",
+    "b_cols": [
+      "meno"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "map_values",
+      "mapping": {
+        "0": "Pre",
+        "1": "Post"
+      },
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "category overlap 100% (A: ['Post', 'Pre'], transformed B: ['Post', 'Pre'])"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Menopausal status; B codes Pre=0, Post=1.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "tsize": {
+    "a_col": "tsize",
+    "b_cols": [
+      "size"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "bin",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": [
+        0.0,
+        20.0,
+        50.0,
+        1000.0
+      ],
+      "labels": [
+        "<=20",
+        "20-50",
+        ">50"
+      ],
+      "expr": null,
+      "apply_to": "A"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "category overlap 100% (A: ['20-50', '<=20', '>50'], transformed B: ['20-50', '<=20', '>50'])"
+    },
+    "same_definition": "yes",
+    "definition_note": "B only has size groups; A (mm) is binned to B's groups, so detail is lost.",
+    "reason": "Tumour size, mm in A vs. three size groups in B.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "tgrade": {
+    "a_col": "tgrade",
+    "b_cols": [
+      "grade"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "map_values",
+      "mapping": {
+        "2": "II",
+        "3": "III"
+      },
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "category overlap 100% (A: ['I', 'II', 'III'], transformed B: ['II', 'III'])"
+    },
+    "same_definition": "unsure",
+    "definition_note": "A has grades I-III, B only 2-3; the grading scheme may differ between the studies.",
+    "reason": "Tumour grade; B has no grade I.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "pnodes": {
+    "a_col": "pnodes",
+    "b_cols": [
+      "nodes"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "identity",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "numeric, ranges plausible"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Number of positive lymph nodes.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "progrec": {
+    "a_col": "progrec",
+    "b_cols": [
+      "pgr"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "identity",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "numeric, ranges plausible"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Progesterone receptor, fmol/l in both.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "estrec": {
+    "a_col": "estrec",
+    "b_cols": [
+      "er"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "identity",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "numeric, ranges plausible"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Estrogen receptor, fmol/l in both.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "horTh": {
+    "a_col": "horTh",
+    "b_cols": [
+      "hormon"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "map_values",
+      "mapping": {
+        "0": "no",
+        "1": "yes"
+      },
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": null,
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "category overlap 100% (A: ['no', 'yes'], transformed B: ['no', 'yes'])"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Hormonal therapy yes/no.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "time": {
+    "a_col": "time",
+    "b_cols": [
+      "rtime",
+      "dtime",
+      "recur",
+      "death"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "derive",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": "rtime if (recur == 1 or (death == 1 and rtime < dtime)) else dtime",
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "numeric, ranges plausible"
+    },
+    "same_definition": "yes",
+    "definition_note": "Conservative recurrence-free survival time as in the R survival docs: death after the recurrence follow-up ended is treated as censored at rtime.",
+    "reason": "A single time to recurrence or death is derived from rtime/dtime.",
+    "candidates": {},
+    "status": "approved"
+  },
+  "cens": {
+    "a_col": "cens",
+    "b_cols": [
+      "recur",
+      "death",
+      "rtime",
+      "dtime"
+    ],
+    "score": null,
+    "decided_by": "LLM",
+    "transform": {
+      "kind": "derive",
+      "mapping": null,
+      "multiply": 1.0,
+      "add": 0.0,
+      "edges": null,
+      "labels": null,
+      "expr": "recur if (recur == 1 or (death == 1 and rtime < dtime)) else death",
+      "apply_to": "B"
+    },
+    "checks": {
+      "ok": true,
+      "reason": ""
+    },
+    "post_check": {
+      "ok": true,
+      "reason": "category overlap 100% (A: ['0', '1'], transformed B: ['0', '1']) | event rate 56.0%; 43 patients with recur=1 or death=1 are counted as event 0"
+    },
+    "same_definition": "yes",
+    "definition_note": "Event = recurrence, or death without a recurrence (conservative rule).",
+    "reason": "Event indicator derived from recur and death.",
+    "candidates": {},
+    "status": "approved"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "age": {
+    "match": [
+      "age"
+    ],
+    "transform": {
+      "kind": "identity"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Both are age in years at diagnosis/surgery."
+  },
+  "menostat": {
+    "match": [
+      "meno"
+    ],
+    "transform": {
+      "kind": "map_values",
+      "mapping": {
+        "0": "Pre",
+        "1": "Post"
+      }
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Menopausal status; B codes Pre=0, Post=1."
+  },
+  "tsize": {
+    "match": [
+      "size"
+    ],
+    "transform": {
+      "kind": "bin",
+      "edges": [
+        0,
+        20,
+        50,
+        1000
+      ],
+      "labels": [
+        "<=20",
+        "20-50",
+        ">50"
+      ],
+      "apply_to": "A"
+    },
+    "same_definition": "yes",
+    "definition_note": "B only has size groups; A (mm) is binned to B's groups, so detail is lost.",
+    "reason": "Tumour size, mm in A vs. three size groups in B."
+  },
+  "tgrade": {
+    "match": [
+      "grade"
+    ],
+    "transform": {
+      "kind": "map_values",
+      "mapping": {
+        "2": "II",
+        "3": "III"
+      }
+    },
+    "same_definition": "unsure",
+    "definition_note": "A has grades I-III, B only 2-3; the grading scheme may differ between the studies.",
+    "reason": "Tumour grade; B has no grade I."
+  },
+  "pnodes": {
+    "match": [
+      "nodes"
+    ],
+    "transform": {
+      "kind": "identity"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Number of positive lymph nodes."
+  },
+  "progrec": {
+    "match": [
+      "pgr"
+    ],
+    "transform": {
+      "kind": "identity"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Progesterone receptor, fmol/l in both."
+  },
+  "estrec": {
+    "match": [
+      "er"
+    ],
+    "transform": {
+      "kind": "identity"
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Estrogen receptor, fmol/l in both."
+  },
+  "horTh": {
+    "match": [
+      "hormon"
+    ],
+    "transform": {
+      "kind": "map_values",
+      "mapping": {
+        "0": "no",
+        "1": "yes"
+      }
+    },
+    "same_definition": "yes",
+    "definition_note": "",
+    "reason": "Hormonal therapy yes/no."
+  },
+  "time": {
+    "match": [
+      "rtime",
+      "dtime",
+      "recur",
+      "death"
+    ],
+    "transform": {
+      "kind": "derive",
+      "expr": "rtime if (recur == 1 or (death == 1 and rtime < dtime)) else dtime"
+    },
+    "same_definition": "yes",
+    "definition_note": "Conservative recurrence-free survival time as in the R survival docs: death after the recurrence follow-up ended is treated as censored at rtime.",
+    "reason": "A single time to recurrence or death is derived from rtime/dtime."
+  },
+  "cens": {
+    "match": [
+      "recur",
+      "death",
+      "rtime",
+      "dtime"
+    ],
+    "transform": {
+      "kind": "derive",
+      "expr": "recur if (recur == 1 or (death == 1 and rtime < dtime)) else death"
+    },
+    "same_definition": "yes",
+    "definition_note": "Event = recurrence, or death without a recurrence (conservative rule).",
+    "reason": "Event indicator derived from recur and death."
+  }
+}
